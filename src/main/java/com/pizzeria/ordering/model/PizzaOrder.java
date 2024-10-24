@@ -55,6 +55,7 @@ public class PizzaOrder {
         else System.out.println("\n Number of pizzas in order = " + pizzaList.size());
         if(pizzaList.size() != actual.getPizzaList().size()) {
             System.out.println("\n acutual have less pizza! it has " + actual.getPizzaList().size());
+            System.out.println("\n expected have: " + pizzaList.size());
             return false;
         }
         for(int i = 0; i < pizzaList.size(); i++){

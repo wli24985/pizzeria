@@ -99,20 +99,18 @@ class OrderingApplicationTests {
 		o1.setCustomerPhoneNumber("9876543210");
 		o1.setCustomerAddress("248 State Av.");
 		o1.setStatus("PREPARING");
-		//o1.setPizzaList(new ArrayList<>());
 		//o1.getPizzaList().add(p1);
         o1.getPizzaList().add(new Pizza());
         o1.getPizzaList().get(0).setType("REGULAR");
         o1.getPizzaList().get(0).setSize("LARGE");
         o1.getPizzaList().get(0).setTopping("MEAT");
         o1.getPizzaList().get(0).setPrice(10.59);
-		//o1.getPizzaList().get(0).setPizzaorder(o1);
         //o1.getPizzaList().add(p2);
 		o1.getPizzaList().add(new Pizza());
-        o1.getPizzaList().get(0).setType("REGULAR");
-        o1.getPizzaList().get(0).setSize("SMALL");
-        o1.getPizzaList().get(0).setTopping("PEPERONI");
-        o1.getPizzaList().get(0).setPrice(8.59);
+        o1.getPizzaList().get(1).setType("REGULAR");
+        o1.getPizzaList().get(1).setSize("SMALL");
+        o1.getPizzaList().get(1).setTopping("PEPERONI");
+        o1.getPizzaList().get(1).setPrice(8.59);
 		//o1.getPizzaList().get(1).setPizzaorder(o1);
 		data.put("o1", o1);
 
