@@ -3,6 +3,7 @@ package com.pizzeria.ordering.model;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,7 @@ enum status{
     DELIVERING,
     DELIVERED
 }
+@Data
 @Entity
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -38,8 +40,9 @@ public class Pizza {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Getter private Integer id; 
 
-    @ManyToOne   //(fetch = FetchType.EAGER) //@JoinColumn(name = "pizzaorder_id")
-    @Getter @Setter private PizzaOrder pizzaorder;
+    // @ManyToOne   //(fetch = FetchType.EAGER) //
+    // @JoinColumn(name = "pizzaorder_id")
+    // @Getter @Setter private PizzaOrder pizzaorder;
 
     @Getter @Setter private String type;
     @Getter @Setter private String size;
@@ -47,5 +50,13 @@ public class Pizza {
     @Getter @Setter private double price;
     @Getter @Setter private int quantity;
 
+    //contructer without id fields
+    public Pizza(String t, String s, String top, double p, int q){
+        type = t;
+        size = s;
+        topping = top;
+        price = p;
+        quantity = q;
+    }
 
 }

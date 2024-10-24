@@ -64,8 +64,10 @@ class OrderingApplicationTests {
 
     @BeforeEach
     public void setup() throws ParseException{
-        pizzaOrderRepository.deleteAll();
-
+        List<PizzaOrder> list_PO = pizzaOrderRepository.findAllByIsTestData(true);
+        for(PizzaOrder po: list_PO){
+            pizzaOrderRepository.deleteById(po.getId()); 
+        }
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
 		LocalDateTimeDeserializer dateTimeDeserializer = new LocalDateTimeDeserializer(formatter);
@@ -85,12 +87,12 @@ class OrderingApplicationTests {
 
         Map<String, PizzaOrder> data = new LinkedHashMap<>();
 
-		Pizza p1 = new Pizza(null, null, "REGULAR", "LARGE", "MEAT", 10.59, 2);
-		Pizza p2 = new Pizza(null, null, "REGULAR", "SMALL", "PEPERONI", 8.59, 1);
-		Pizza p3 = new Pizza(null, null, "DEEP_DISH", "SMALL", "MUSHROOM", 9.59, 1);
-		Pizza p4 = new Pizza(null, null, "THIN_CRUST", "MEDIUM", "CHEESE", 10.59, 2);
-		Pizza p5 = new Pizza(null, null, "REGULAR", "LARGE", "PEPERONI", 12.59, 1);
-		Pizza p6 = new Pizza(null, null, "DEEP_DISH", "SMALL", "MEAT", 9.99, 3);
+		Pizza p1 = new Pizza("REGULAR", "LARGE", "MEAT", 10.59, 2);
+		Pizza p2 = new Pizza("REGULAR", "SMALL", "PEPERONI", 8.59, 1);
+		Pizza p3 = new Pizza("DEEP_DISH", "SMALL", "MUSHROOM", 9.59, 1);
+		Pizza p4 = new Pizza("THIN_CRUST", "MEDIUM", "CHEESE", 10.59, 2);
+		Pizza p5 = new Pizza("REGULAR", "LARGE", "PEPERONI", 12.59, 1);
+		Pizza p6 = new Pizza("DEEP_DISH", "SMALL", "MEAT", 9.99, 3);
 		
 
         PizzaOrder o1 = new PizzaOrder();
@@ -99,18 +101,21 @@ class OrderingApplicationTests {
 		o1.setCustomerPhoneNumber("9876543210");
 		o1.setCustomerAddress("248 State Av.");
 		o1.setStatus("PREPARING");
+        o1.setTestData(true); 
 		//o1.getPizzaList().add(p1);
         o1.getPizzaList().add(new Pizza());
         o1.getPizzaList().get(0).setType("REGULAR");
         o1.getPizzaList().get(0).setSize("LARGE");
         o1.getPizzaList().get(0).setTopping("MEAT");
         o1.getPizzaList().get(0).setPrice(10.59);
+        //o1.getPizzaList().get(0).setPizzaorder(o1);
         //o1.getPizzaList().add(p2);
 		o1.getPizzaList().add(new Pizza());
         o1.getPizzaList().get(1).setType("REGULAR");
         o1.getPizzaList().get(1).setSize("SMALL");
         o1.getPizzaList().get(1).setTopping("PEPERONI");
         o1.getPizzaList().get(1).setPrice(8.59);
+        //o1.getPizzaList().get(1).setPizzaorder(o1);
 		//o1.getPizzaList().get(1).setPizzaorder(o1);
 		data.put("o1", o1);
 
@@ -136,7 +141,7 @@ class OrderingApplicationTests {
 		dataMap = getTestData();
 	}
     */ 
-    /*
+    
     @Test
     public void testPizzaOrderingEndpointWithPOST() throws Exception {
         
@@ -155,8 +160,7 @@ class OrderingApplicationTests {
 		Assert.isTrue(expectedRecord.compare(actualRecord), "expectedRecords must match actualRecordes");
         assertEquals(true, pizzaOrderRepository.findById(actualRecord.getId()).isPresent());
     }
-    */
-    /* 
+     
     @Test
     public void testPizzaOrderingEndpointWithGETList() throws Exception {
         Map<String, PizzaOrder> data = getTestData();
@@ -183,9 +187,9 @@ class OrderingApplicationTests {
         for (int i = 0; i < expectedRecords.size(); i++) {
 			System.out.print("Actual values: " + om.writeValueAsString(actualRecords.get(i)));
             //Assert.isTrue(new ReflectionEquals(expectedRecords.get(i), "id", "dateTime").matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-			//Assert.isTrue(expectedRecords.get(i).compare(actualRecords.get(i)), "expectedRecords must match actualRecordes");
+			Assert.isTrue(expectedRecords.get(i).compare(actualRecords.get(i)), "expectedRecords must match actualRecordes");
         }
-    }*/
+    }
 	@Test
     public void testPizzaOrderEndpointWithGETById() throws Exception {       
         PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria")

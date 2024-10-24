@@ -3,15 +3,16 @@ package com.pizzeria.ordering.model;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-//import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor //(access = AccessLevel.PROTECTED)
@@ -29,7 +30,8 @@ public class PizzaOrder {
     @Getter @Setter private String status;
     @Getter @Setter private boolean isTestData;
 
-    @OneToMany(mappedBy = "pizzaorder", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) //mappedBy = "pizzaorder",
+    @JoinColumn(name = "pizzaorder_id")
     @Getter @Setter private List<Pizza> pizzaList = new ArrayList<>();
 
     public boolean compare(PizzaOrder actual){
