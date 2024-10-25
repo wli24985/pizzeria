@@ -9,11 +9,14 @@ import org.springframework.data.repository.query.Param;
 
 import com.pizzeria.ordering.model.PizzaOrder;
 
+import jakarta.transaction.Transactional;
+
 public interface PizzaOrderRepository extends JpaRepository<PizzaOrder, Integer> {
     //public List<PizzaOrder> findAllByOrderByCustomerPhoneNumberAsc(String phoneNumber);
     public List<PizzaOrder> findAllByOrderByIdAsc();
     public List<PizzaOrder> findAllByIsTestData(boolean b);
 
+    @Transactional(rollbackOn = Exception.class)
     @Modifying
     @Query("update PizzaOrder set status = :status where id = :id")
     int setStatusForPizzaOrder(@Param("status") String status, @Param("id") Integer id);   

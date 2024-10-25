@@ -2,6 +2,7 @@ package com.pizzeria.ordering.controller;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -110,9 +111,15 @@ public class PizzaOrderingApiController {
      * @param id
      * @return 404 if not found or 200 with order data if found
     */
-    @GetMapping("/status/{id}/{status}")
+    @PutMapping("/status/{id}/{status}")
     public ResponseEntity<?> updateOrderStatusById(@PathVariable Integer id, @PathVariable String status) {
-        if(status != "PREPARING" && status != "BAKED" && status != "DELIVERING" && status != "DELIVERED"){
+        List<String> validStatusList = new ArrayList<>(){{
+            add("PREPARING");
+            add("BAKED");
+            add("DELIVERING");
+            add("DELIVERED");
+        }};
+        if(!validStatusList.contains(status)){
             return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
         }
         OrderingDTO ret_ordering_dto = pizzaOrderService.updateOrderStatusWithId(id, status);

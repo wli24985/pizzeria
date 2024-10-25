@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -211,7 +212,34 @@ class OrderingApplicationTests {
         mockMvc.perform(get("/pizzaria/" + Integer.MAX_VALUE))
                 .andDo(print())
                 .andExpect(status().isNotFound());
-    }    
+    }
+
+    @Test
+    public void testPizzaOrderEndpointUpdateStatusById() throws Exception {
+        String newStatus = "DELIVERED";       
+        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria")
+                .contentType("application/json")
+                .content(om.writeValueAsString(dataMap.get("o1"))))
+                .andDo(print())
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
+        System.out.print("to be updated value: " + om.writeValueAsString(expectedRecord));
+        
+        mockMvc.perform(put("/pizzaria/status/" + expectedRecord.getId() + "/" + newStatus))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        PizzaOrder actualRecord = om.readValue(mockMvc.perform(get("/pizzaria/" + expectedRecord.getId())
+                .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
+		System.out.print("Actual after update values: " + om.writeValueAsString(actualRecord));
+        //Assert.isTrue(new ReflectionEquals(expectedRecord, "id", "dateTime").matches(actualRecord), "expectedRecords must match actualRecordes");
+		Assert.isTrue(actualRecord.getStatus().equals(newStatus), "expected status must match actual status");
+
+        mockMvc.perform(put("/pizzaria/status/" + Integer.MAX_VALUE + "/" + newStatus))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }   
      
     @Test
     public void testPizzaOrderEndpointDeleteById() throws Exception {
