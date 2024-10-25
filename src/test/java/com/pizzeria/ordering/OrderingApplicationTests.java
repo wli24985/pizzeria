@@ -22,7 +22,7 @@ import com.pizzeria.ordering.repository.PizzaOrderRepository;
 //import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 //import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
+//import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.annotation.DirtiesContext;
@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+//import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -89,8 +89,8 @@ class OrderingApplicationTests {
 
         Map<String, PizzaOrder> data = new LinkedHashMap<>();
 
-		Pizza p1 = new Pizza("REGULAR", "LARGE", "MEAT", 10.59, 2);
-		Pizza p2 = new Pizza("REGULAR", "SMALL", "PEPERONI", 8.59, 1);
+		//Pizza p1 = new Pizza("REGULAR", "LARGE", "MEAT", 10.59, 2);
+		//Pizza p2 = new Pizza("REGULAR", "SMALL", "PEPERONI", 8.59, 1);
 		Pizza p3 = new Pizza("DEEP_DISH", "SMALL", "MUSHROOM", 9.59, 1);
 		Pizza p4 = new Pizza("THIN_CRUST", "MEDIUM", "CHEESE", 10.59, 2);
 		Pizza p5 = new Pizza("REGULAR", "LARGE", "PEPERONI", 12.59, 1);
@@ -149,7 +149,7 @@ class OrderingApplicationTests {
         
         PizzaOrder expectedRecord = dataMap.get("o1");
 		System.out.print("Expected0: "+ om.writeValueAsString(expectedRecord));
-        PizzaOrder actualRecord = om.readValue(mockMvc.perform(post("/pizzaria")
+        PizzaOrder actualRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
@@ -170,7 +170,7 @@ class OrderingApplicationTests {
         List<PizzaOrder> expectedRecords = new ArrayList<>();
 
         for (Map.Entry<String, PizzaOrder> kv : data.entrySet()) {
-            expectedRecords.add(om.readValue(mockMvc.perform(post("/pizzaria")
+            expectedRecords.add(om.readValue(mockMvc.perform(post("/pizzaria/")
                     .contentType("application/json")
                     .content(om.writeValueAsString(kv.getValue())))
                     .andDo(print())
@@ -195,7 +195,7 @@ class OrderingApplicationTests {
 	
     @Test
     public void testPizzaOrderEndpointWithGETById() throws Exception {       
-        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria")
+        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
@@ -217,7 +217,7 @@ class OrderingApplicationTests {
     @Test
     public void testPizzaOrderEndpointUpdateStatusById() throws Exception {
         String newStatus = "DELIVERED";       
-        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria")
+        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
@@ -245,13 +245,13 @@ class OrderingApplicationTests {
     public void testPizzaOrderEndpointDeleteById() throws Exception {
         int i = 0;
         for (Map.Entry<String, PizzaOrder> kv : dataMap.entrySet()) {
-            mockMvc.perform(post("/pizzaria")
+            mockMvc.perform(post("/pizzaria/")
             .contentType("application/json")
             .content(om.writeValueAsString(kv.getValue())));
             i++;
             if(i>=2) break;
         }
-        Integer id = om.readValue(mockMvc.perform(post("/pizzaria")
+        Integer id = om.readValue(mockMvc.perform(post("/pizzaria/")
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o3"))))
                 .andDo(print())

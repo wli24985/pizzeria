@@ -37,7 +37,7 @@ public class PizzaOrderingApiController {
      * @return ResponseEntity with created pizza order
      * @throws ParseException
      */
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<?> createPizzaOrderEntity(@RequestBody OrderingDTO orderingDTO) throws ParseException {
         OrderingDTO w =  pizzaOrderService.createNewOrder(orderingDTO);
         if(w == null){
