@@ -6,9 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +39,9 @@ public class PizzaOrderingApiController {
     @PostMapping
     public ResponseEntity<?> createPizzaOrderEntity(@RequestBody OrderingDTO orderingDTO) throws ParseException {
         OrderingDTO w =  pizzaOrderService.createNewOrder(orderingDTO);
+        // if(w == null){
+        //     return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
+        // }
         return new ResponseEntity<>(w, HttpStatus.CREATED);
     }
 
@@ -73,5 +78,52 @@ public class PizzaOrderingApiController {
             return ResponseEntity.ok().body(ret_ordering_dto);
         }
     }
-    
+
+    /**
+     * - deletes a record with the given id
+     * <p>
+     - if the matching record exists, the response code is 204 and the response body is empty
+     * <p>
+     - if there is no record in the collection with the given id, the response code is 404
+     * @param id
+     * @return 404 if not found or 204 with order data if found
+     */
+    /*
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteOrderingById(@PathVariable Integer id) {
+
+        String s = pizzaOrderService.deleteOrderWithId(id);
+        if(s == null){
+            // ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
+            // return responseEntity;
+           return new ResponseEntity<Error>(HttpStatus.NOT_FOUND); 
+        }else{
+            return ResponseEntity.noContent().build();
+        }
+    }
+    */
+    /**
+     * - deletes a record with the given id
+     * <p>
+     - if the matching record exists, the response code is 204 and the response body is empty
+     * <p>
+     - if there is no record in the collection with the given id, the response code is 404
+     * @param id
+     * @return 404 if not found or 200 with order data if found
+     
+    @GetMapping("/status/{id}/{status}")
+    public ResponseEntity<?> updateOrderStatusById(@PathVariable Integer id, @PathVariable String status) {
+        if(status != "PREPARING" && status != "BAKED" && status != "DELIVERING" && status != "DELIVERED"){
+            return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
+        }
+        OrderingDTO ret_ordering_dto = pizzaOrderService.updateOrderStatusWithId(id, status);
+        if(ret_ordering_dto == null){
+            // ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
+            // return responseEntity;
+            return new ResponseEntity<Error>(HttpStatus.NOT_FOUND); 
+        }else{
+            return ResponseEntity.ok().body(ret_ordering_dto);
+        }
+    }
+    */
 }

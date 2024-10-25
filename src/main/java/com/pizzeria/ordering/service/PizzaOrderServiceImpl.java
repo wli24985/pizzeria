@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.pizzeria.ordering.DTO.OrderingDTO;
 import com.pizzeria.ordering.model.PizzaOrder;
+import com.pizzeria.ordering.model.Pizza;
 import com.pizzeria.ordering.repository.PizzaOrderRepository;
 
 @Service
@@ -21,9 +22,14 @@ public class PizzaOrderServiceImpl {
     PizzaOrderRepository pizzaOrderRepository;
 
     private static ModelMapper modelMapper = new ModelMapper();
-    private static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; //DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss");
+    private static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     public OrderingDTO createNewOrder(OrderingDTO orderingDTO) throws ParseException{
+        // for(Pizza p: orderingDTO.getPizzaList()){
+        //     if(p.getSize() != "SMALL" && p.getSize() != "MEDIUM" && p.getSize() != "LARGE"){
+        //         return null;
+        //     }
+        // }
         orderingDTO.setId(null);
         PizzaOrder pizzaOrder_entity = modelMapper.map(orderingDTO, PizzaOrder.class);
         pizzaOrder_entity.setDateTime(LocalDateTime.now());
@@ -58,6 +64,39 @@ public class PizzaOrderServiceImpl {
             return null;
         }
     }
+
+    /**
+     * delete/cancel pizza ordering data stored in database using Id
+     * @param id
+     * @return no return, it may throw exception, and 
+     */
+    /*
+    public String deleteOrderWithId(Integer id) {
+
+        if (pizzaOrderRepository.existsById(id)) {
+            pizzaOrderRepository.deleteById(id);
+            return "Delete Successful.";
+        }else{
+            return null;
+        }
+    }
+    */
+    /**
+     * update pizza order status stored in database using Id
+     * @param id
+     * @return the new OrderingDTO 
+     */
+    // public OrderingDTO updateOrderStatusWithId(Integer id, String newStatus) {
+
+    //     if (pizzaOrderRepository.existsById(id)) {
+    //         int i = pizzaOrderRepository.setStatusForPizzaOrder(newStatus, id);
+    //         System.out.println("update returned value: " + i);
+    //         PizzaOrder pizzaOrder_Entity = pizzaOrderRepository.findById(id).get();
+    //         return getOrderingDto(pizzaOrder_Entity);
+    //     }else{
+    //         return null;
+    //     }
+    // }
 
     /**
      * 

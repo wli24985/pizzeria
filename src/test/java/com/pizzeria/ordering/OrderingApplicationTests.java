@@ -40,6 +40,7 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
@@ -190,7 +191,8 @@ class OrderingApplicationTests {
 			Assert.isTrue(expectedRecords.get(i).compare(actualRecords.get(i)), "expectedRecords must match actualRecordes");
         }
     }
-	@Test
+	
+    @Test
     public void testPizzaOrderEndpointWithGETById() throws Exception {       
         PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria")
                 .contentType("application/json")
@@ -210,124 +212,37 @@ class OrderingApplicationTests {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+    
+    /* 
+    @Test
+    public void testPizzaOrderEndpointDeleteById() throws Exception {
+        int i = 0;
+        for (Map.Entry<String, PizzaOrder> kv : dataMap.entrySet()) {
+            mockMvc.perform(post("/pizzaria")
+            .contentType("application/json")
+            .content(om.writeValueAsString(kv.getValue())));
+            i++;
+            if(i>=2) break;
+        }
+        Integer id = om.readValue(mockMvc.perform(post("/pizzaria")
+                .contentType("application/json")
+                .content(om.writeValueAsString(dataMap.get("o3"))))
+                .andDo(print())
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class).getId();
+        System.out.print("id to be deleted: " + id);        
+        String s = om.readValue(mockMvc.perform(delete("/pizzaria/" + id)
+                .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), String.class);
 
-//    @Test
-//     public void testPizzaOrderEndpointWithGETListAndDateFilter() throws Exception {
-//         Date date = simpleDateFormat.parse("2019-03-12");
-//         Map<String, PizzaOrder> data = getTestData();
-//         data.remove("moscow2");
-//         List<PizzaOrder> expectedRecords = new ArrayList<>();
+		System.out.print("delete returned values: " + s);
+        //Assert.isTrue(new ReflectionEquals(expectedRecord, "id", "dateTime").matches(actualRecord), "expectedRecords must match actualRecordes");
+		//Assert.isTrue(expectedRecord.compare(actualRecord), "expectedRecords must match actualRecordes");
 
-//         for (Map.Entry<String, PizzaOrder> kv : data.entrySet()) {
-//             expectedRecords.add(om.readValue(mockMvc.perform(post("/PizzaOrder")
-//                     .contentType("application/json")
-//                     .content(om.writeValueAsString(kv.getValue())))
-//                     .andDo(print())
-//                     .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class));
-//         }
-//         expectedRecords = expectedRecords.stream().filter(r -> r.getDate().equals(date)).collect(Collectors.toList());
-
-//         List<PizzaOrder> actualRecords = om.readValue(mockMvc.perform(get("/PizzaOrder?date=2019-03-12"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$.*", hasSize(expectedRecords.size())))
-//                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
-//         });
-
-//         for (int i = 0; i < expectedRecords.size(); i++) {
-//             Assert.isTrue(new ReflectionEquals(expectedRecords.get(i)).matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-//         }
-
-//         mockMvc.perform(get("/PizzaOrder?date=2015-06-06"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$.*", hasSize(0)))
-//                 .andExpect(status().isOk());
-//     }
-
-//     @Test
-//     public void testPizzaOrderEndpointWithGETListAndCityFilter() throws Exception {
-//         List<PizzaOrder> originalResponse = new ArrayList<>();
-
-//         for (Map.Entry<String, PizzaOrder> kv : getTestData().entrySet()) {
-//             originalResponse.add(om.readValue(mockMvc.perform(post("/PizzaOrder")
-//                     .contentType("application/json")
-//                     .content(om.writeValueAsString(kv.getValue())))
-//                     .andDo(print())
-//                     .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class));
-//         }
-
-//         //test single
-//         List<PizzaOrder> expectedRecords = originalResponse.stream().filter(r -> r.getCity().toLowerCase().equals("moscow")).collect(Collectors.toList());
-//         List<PizzaOrder> actualRecords = om.readValue(mockMvc.perform(get("/PizzaOrder?city=moscow"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$.*", hasSize(expectedRecords.size())))
-//                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
-//         });
-
-//         for (int i = 0; i < expectedRecords.size(); i++) {
-//             Assert.isTrue(new ReflectionEquals(expectedRecords.get(i)).matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-//         }
-
-//         //test multiple
-//         expectedRecords = originalResponse.stream().filter(r -> ("moscow,London,ChicaGo").toLowerCase().contains(r.getCity().toLowerCase())).collect(Collectors.toList());
-//         System.out.println(expectedRecords);
-//         actualRecords = om.readValue(mockMvc.perform(get("/PizzaOrder?city=moscow,London,ChicaGo"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$.*", hasSize(expectedRecords.size())))
-//                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
-//         });
-
-//         for (int i = 0; i < expectedRecords.size(); i++) {
-//             Assert.isTrue(new ReflectionEquals(expectedRecords.get(i)).matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-//         }
-
-//         //test none
-//         mockMvc.perform(get("/PizzaOrder?city=berlin,amsterdam"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$.*", hasSize(0)))
-//                 .andExpect(status().isOk());
-//     }
-
-//     @Test
-//     public void testPizzaOrderEndpointWithGETListAndDateOrder() throws Exception {
-//         List<PizzaOrder> expectedRecords = new ArrayList<>();
-
-//         for (Map.Entry<String, PizzaOrder> kv : getTestData().entrySet()) {
-//             expectedRecords.add(om.readValue(mockMvc.perform(post("/PizzaOrder")
-//                     .contentType("application/json")
-//                     .content(om.writeValueAsString(kv.getValue())))
-//                     .andDo(print())
-//                     .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class));
-//         }
-//         Collections.sort(expectedRecords, Comparator.comparing(PizzaOrder::getDate).thenComparing(PizzaOrder::getId));
-
-//         List<PizzaOrder> actualRecords = om.readValue(mockMvc.perform(get("/PizzaOrder?sort=date"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$", hasSize(expectedRecords.size())))
-//                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
-//         });
-
-//         for (int i = 0; i < expectedRecords.size(); i++) {
-//             Assert.isTrue(new ReflectionEquals(expectedRecords.get(i)).matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-//         }
-
-//         Collections.sort(expectedRecords, Comparator.comparing(PizzaOrder::getDate, Comparator.reverseOrder()).thenComparing(PizzaOrder::getId));
-
-//         actualRecords = om.readValue(mockMvc.perform(get("/PizzaOrder?sort=-date"))
-//                 .andDo(print())
-//                 .andExpect(jsonPath("$", isA(ArrayList.class)))
-//                 .andExpect(jsonPath("$", hasSize(expectedRecords.size())))
-//                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
-//         });
-
-//         for (int i = 0; i < expectedRecords.size(); i++) {
-//             Assert.isTrue(new ReflectionEquals(expectedRecords.get(i)).matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-//         }
-//     }
+        mockMvc.perform(delete("/pizzaria/" + Integer.MAX_VALUE))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+    */
 
 }
