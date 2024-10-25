@@ -23,13 +23,18 @@ public class PizzaOrderServiceImpl {
 
     private static ModelMapper modelMapper = new ModelMapper();
     private static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private static List<String> validSizeList = new ArrayList<>(){{
+        add("SMALL");
+        add("MEDIUM");
+        add("LARGE");
+    }};
 
     public OrderingDTO createNewOrder(OrderingDTO orderingDTO) throws ParseException{
-        // for(Pizza p: orderingDTO.getPizzaList()){
-        //     if(p.getSize() != "SMALL" && p.getSize() != "MEDIUM" && p.getSize() != "LARGE"){
-        //         return null;
-        //     }
-        // }
+        for(Pizza p: orderingDTO.getPizzaList()){
+            if(!validSizeList.contains(p.getSize())){
+                return null;
+            }
+        }
         orderingDTO.setId(null);
         PizzaOrder pizzaOrder_entity = modelMapper.map(orderingDTO, PizzaOrder.class);
         pizzaOrder_entity.setDateTime(LocalDateTime.now());
@@ -86,17 +91,17 @@ public class PizzaOrderServiceImpl {
      * @param id
      * @return the new OrderingDTO 
      */
-    // public OrderingDTO updateOrderStatusWithId(Integer id, String newStatus) {
+    public OrderingDTO updateOrderStatusWithId(Integer id, String newStatus) {
 
-    //     if (pizzaOrderRepository.existsById(id)) {
-    //         int i = pizzaOrderRepository.setStatusForPizzaOrder(newStatus, id);
-    //         System.out.println("update returned value: " + i);
-    //         PizzaOrder pizzaOrder_Entity = pizzaOrderRepository.findById(id).get();
-    //         return getOrderingDto(pizzaOrder_Entity);
-    //     }else{
-    //         return null;
-    //     }
-    // }
+        if (pizzaOrderRepository.existsById(id)) {
+            int i = pizzaOrderRepository.setStatusForPizzaOrder(newStatus, id);
+            System.out.println("update returned value: " + i);
+            PizzaOrder pizzaOrder_Entity = pizzaOrderRepository.findById(id).get();
+            return getOrderingDto(pizzaOrder_Entity);
+        }else{
+            return null;
+        }
+    }
 
     /**
      * 

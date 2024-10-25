@@ -14,8 +14,8 @@ public interface PizzaOrderRepository extends JpaRepository<PizzaOrder, Integer>
     public List<PizzaOrder> findAllByOrderByIdAsc();
     public List<PizzaOrder> findAllByIsTestData(boolean b);
 
-    // @Modifying
-    // @Query("update PizzaOrder a set a.status = :status where a.id = :id")
-    // int setStatusForPizzaOrder(@Param("status") String status, @Param("id") Integer id);   
+    @Modifying
+    @Query("update PizzaOrder set status = :status where id = :id")
+    int setStatusForPizzaOrder(@Param("status") String status, @Param("id") Integer id);   
 
 }

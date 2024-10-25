@@ -39,9 +39,9 @@ public class PizzaOrderingApiController {
     @PostMapping
     public ResponseEntity<?> createPizzaOrderEntity(@RequestBody OrderingDTO orderingDTO) throws ParseException {
         OrderingDTO w =  pizzaOrderService.createNewOrder(orderingDTO);
-        // if(w == null){
-        //     return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
-        // }
+        if(w == null){
+            return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
+        }
         return new ResponseEntity<>(w, HttpStatus.CREATED);
     }
 
@@ -102,14 +102,14 @@ public class PizzaOrderingApiController {
     }
 
     /**
-     * - deletes a record with the given id
+     * - updates a record with the given id to new status
      * <p>
-     - if the matching record exists, the response code is 204 and the response body is empty
+     - if the matching record exists, the response code is 200 and the response body is the updated PizzaOrder
      * <p>
      - if there is no record in the collection with the given id, the response code is 404
      * @param id
      * @return 404 if not found or 200 with order data if found
-     
+    */
     @GetMapping("/status/{id}/{status}")
     public ResponseEntity<?> updateOrderStatusById(@PathVariable Integer id, @PathVariable String status) {
         if(status != "PREPARING" && status != "BAKED" && status != "DELIVERING" && status != "DELIVERED"){
@@ -117,12 +117,10 @@ public class PizzaOrderingApiController {
         }
         OrderingDTO ret_ordering_dto = pizzaOrderService.updateOrderStatusWithId(id, status);
         if(ret_ordering_dto == null){
-            // ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
-            // return responseEntity;
             return new ResponseEntity<Error>(HttpStatus.NOT_FOUND); 
         }else{
             return ResponseEntity.ok().body(ret_ordering_dto);
         }
     }
-    */
+    
 }
