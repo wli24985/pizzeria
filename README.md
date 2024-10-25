@@ -43,8 +43,10 @@ Valid pizza order statuses: "PREPARING", "BAKED", "DELIVERING", "DELIVERED"
 Valid pizza sizes: "SMALL", "MEDIUM", "LARGE"
 
 ## Requirements:
-The `REST` service must expose the `/pizzaria/` endpoint, which allows for managing the collection of pizzaria pizza order records in the following way:
+The current url for the service on AWS ECS is: http://13.58.25.163:8080/pizzaria/
+This IP address could change. Please refer to this documenet for the latest IP address.
 
+The `REST` service must expose the `/pizzaria/` endpoint, which allows for managing the collection of pizzaria pizza order records in the following way:
 
 POST request to `/pizzaria/`:
 
@@ -52,7 +54,7 @@ POST request to `/pizzaria/`:
 - expects a valid pizzaria data object as its body payload, except that it has a null id property for the order and the pizzas; you can assume that the given object is always valid
 - adds the given object to the collection and assigns a unique integer id to it
 - the response code is 201 and the response body is the created record, including its unique id
-
+- Please see the example of a pizzaria order data JSON object
 
 GET request to `/pizzaria`:
 
