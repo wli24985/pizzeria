@@ -1,5 +1,5 @@
 ## About
-- spring boot pizzaria API exam
+- spring boot pizzaria API
 ## Environment:
 - Java version: 21
 - Maven version: 3.*
@@ -39,15 +39,17 @@ Example of a pizzaria data JSON object:
     "testData": true
 }
 ```
+Valid pizza order statuses: "PREPARING", "BAKED", "DELIVERING", "DELIVERED"
+Valid pizza sizes: "SMALL", "MEDIUM", "LARGE"
 
 ## Requirements:
-The `REST` service must expose the `/pizzaria` endpoint, which allows for managing the collection of pizzaria records in the following way:
+The `REST` service must expose the `/pizzaria/` endpoint, which allows for managing the collection of pizzaria pizza order records in the following way:
 
 
-POST request to `/pizzaria`:
+POST request to `/pizzaria/`:
 
 - creates a new pizzaria data record
-- expects a valid pizzaria data object as its body payload, except that it does not have an id property; you can assume that the given object is always valid
+- expects a valid pizzaria data object as its body payload, except that it has a null id property for the order and the pizzas; you can assume that the given object is always valid
 - adds the given object to the collection and assigns a unique integer id to it
 - the response code is 201 and the response body is the created record, including its unique id
 
@@ -55,22 +57,31 @@ POST request to `/pizzaria`:
 GET request to `/pizzaria`:
 
 - the response code is 200
-- the response body is an array of matching records, ordered by their ids in increasing order
-- accepts an optional query string parameter, date, in the format YYYY-MM-DD, for example /pizzaria/?date=2019-06-11. When this parameter is present, only the records with the matching date are returned.
-- accepts an optional query string parameter, city, and when this parameter is present, only the records with the matching city are returned. The value of this parameter is case insensitive, so "London" and "london" are equivalent. Moreover, it might contain several values, separated by commas (e.g. city=london,Moscow), meaning that records with the city matching any of these values must be returned.
-- accepts an optional query string parameter, sort, that can take one of two values: either "date" or "-date". If the value is "date", then the ordering is by date in ascending order. If it is "-date", then the ordering is by date in descending order. If there are two records with the same date, the one with the smaller id must come first.
+- the response body is an array of matching pizza order records, ordered by their ids in increasing order
 
 
 GET request to `/pizzaria/<id>`:
 
-- returns a record with the given id
+- returns a pizza order record with the given id
 - if the matching record exists, the response code is 200 and the response body is the matching object
 - if there is no record in the collection with the given id, the response code is 404
 
+DELETE request to `/pizzaria/<id>`:
+
+- deletes a pizza order record with the given id
+- if the matching record exists, the response code is 204 and the response body is empy
+- if there is no record in the collection with the given id, the response code is 404
+
+PUT request to `/pizzaria/status/<id>/<new status>`:
+
+- updates a pizza order record with the given id to new status
+- if the matching record exists, the response code is 200 and the response body is the updated pizza order 
+- if there is no record in the collection with the given id, the response code is 404
+  
 ## Commands
 - run: 
 ```bash
-mvn clean package; java -jar target/orderinApi-1.0-SNAPSHOT.jar
+mvn clean package; java -jar target/pizzariaApi-1.0-SNAPSHOT.jar
 ```
 - install: 
 ```bash
