@@ -70,7 +70,7 @@ public class PizzaOrderServiceImpl {
      * @param id
      * @return no return, it may throw exception, and 
      */
-    /*
+    
     public String deleteOrderWithId(Integer id) {
 
         if (pizzaOrderRepository.existsById(id)) {
@@ -80,7 +80,7 @@ public class PizzaOrderServiceImpl {
             return null;
         }
     }
-    */
+    
     /**
      * update pizza order status stored in database using Id
      * @param id

@@ -88,20 +88,19 @@ public class PizzaOrderingApiController {
      * @param id
      * @return 404 if not found or 204 with order data if found
      */
-    /*
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrderingById(@PathVariable Integer id) {
 
         String s = pizzaOrderService.deleteOrderWithId(id);
         if(s == null){
-            // ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
-            // return responseEntity;
+
            return new ResponseEntity<Error>(HttpStatus.NOT_FOUND); 
         }else{
             return ResponseEntity.noContent().build();
         }
     }
-    */
+
     /**
      * - deletes a record with the given id
      * <p>

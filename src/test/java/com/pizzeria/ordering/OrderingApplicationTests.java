@@ -211,9 +211,8 @@ class OrderingApplicationTests {
         mockMvc.perform(get("/pizzaria/" + Integer.MAX_VALUE))
                 .andDo(print())
                 .andExpect(status().isNotFound());
-    }
-    
-    /* 
+    }    
+     
     @Test
     public void testPizzaOrderEndpointDeleteById() throws Exception {
         int i = 0;
@@ -230,19 +229,16 @@ class OrderingApplicationTests {
                 .andDo(print())
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class).getId();
         System.out.print("id to be deleted: " + id);        
-        String s = om.readValue(mockMvc.perform(delete("/pizzaria/" + id)
+        String s = mockMvc.perform(delete("/pizzaria/" + id)
                 .contentType("application/json"))
                 .andDo(print())
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), String.class);
+                .andExpect(status().isNoContent()).andReturn().getResponse().getContentAsString();
 
 		System.out.print("delete returned values: " + s);
-        //Assert.isTrue(new ReflectionEquals(expectedRecord, "id", "dateTime").matches(actualRecord), "expectedRecords must match actualRecordes");
-		//Assert.isTrue(expectedRecord.compare(actualRecord), "expectedRecords must match actualRecordes");
 
         mockMvc.perform(delete("/pizzaria/" + Integer.MAX_VALUE))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
-    */
 
 }
