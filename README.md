@@ -83,7 +83,7 @@ PUT request to `/pizzaria/status/<id>/<new status>`:
 ## Commands
 - run: 
 ```bash
-mvn clean package; java -jar target/pizzariaApi-1.0-SNAPSHOT.jar
+mvn clean package; java -jar target/ordering--1.0-SNAPSHOT.jar
 ```
 - install: 
 ```bash
