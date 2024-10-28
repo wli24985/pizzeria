@@ -36,7 +36,7 @@ Example of a pizzaria data JSON object:
             "quantity": 0
         }
     ],
-    "testData": true
+    "testData": false
 }
 ```
 Valid pizza order statuses: "PREPARING", "BAKED", "DELIVERING", "DELIVERED"
