@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.commons.logging.Logger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,28 +16,28 @@ import com.pizzeria.ordering.model.PizzaOrder;
 import com.pizzeria.ordering.model.Pizza;
 import com.pizzeria.ordering.repository.PizzaOrderRepository;
 
-//import lombok.Getter;
-//import lombok.Setter;
-
 //import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 //import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith; //this replaces RunWith
 //import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.text.ParseException;
-//import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-//import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,24 +49,42 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+// import static org.springframework.test.web.servlet.setup.AbstractMockMvcBuilder.*;
+// import static org.springframework.test.web.servlet.setup.MockMvcConfigurer.*;
 
+//@ExtendWith(SpringRunner.class)
 @SpringBootTest
+// @ExtendWith(SpringExtension.class)
+// @Import(SecurityConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 class OrderingApplicationTests {
 
 	Logger logger = LoggerFactory.getLogger(OrderingApplicationTests.class);
     //private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 	//private static final DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss");
+    private final String tUser = "pUser";
+    private final String tPassword = "IWantP1zza!";
     private ObjectMapper om = new ObjectMapper();	
 	protected Map<String, PizzaOrder> dataMap;
     @Autowired
     PizzaOrderRepository pizzaOrderRepository;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+    // @BeforeAll
+    // public static void init() throws Exception {
+        
+
+    // }
 
     @BeforeEach
     public void setup() throws ParseException{
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
         List<PizzaOrder> list_PO = pizzaOrderRepository.findAllByIsTestData(true);
         for(PizzaOrder po: list_PO){
             pizzaOrderRepository.deleteById(po.getId()); 
@@ -81,7 +100,6 @@ class OrderingApplicationTests {
 
 		om.registerModule(javaTimeModule);
         dataMap = getTestData();
-        //om.setDateFormat(simpleDateFormat); //(dtFormatter);
     }
 
 
@@ -149,7 +167,7 @@ class OrderingApplicationTests {
         
         PizzaOrder expectedRecord = dataMap.get("o1");
 		System.out.print("Expected0: "+ om.writeValueAsString(expectedRecord));
-        PizzaOrder actualRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
+        PizzaOrder actualRecord = om.readValue(mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
@@ -170,7 +188,7 @@ class OrderingApplicationTests {
         List<PizzaOrder> expectedRecords = new ArrayList<>();
 
         for (Map.Entry<String, PizzaOrder> kv : data.entrySet()) {
-            expectedRecords.add(om.readValue(mockMvc.perform(post("/pizzaria/")
+            expectedRecords.add(om.readValue(mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
                     .contentType("application/json")
                     .content(om.writeValueAsString(kv.getValue())))
                     .andDo(print())
@@ -179,29 +197,35 @@ class OrderingApplicationTests {
 		//Assert.isTrue(false, "break and check db.");
         Collections.sort(expectedRecords, Comparator.comparing(PizzaOrder::getId));
 
-        List<PizzaOrder> actualRecords = om.readValue(mockMvc.perform(get("/pizzaria/"))
+        List<PizzaOrder> actualRecords = om.readValue(mockMvc.perform(get("/pizzaria/").with(user(tUser).password(tPassword)))
                 .andDo(print())
                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
-                .andExpect(jsonPath("$.*", hasSize(expectedRecords.size())))
+                //.andExpect(jsonPath("$.*", hasSize(expectedRecords.size())))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), new TypeReference<List<PizzaOrder>>() {
         });
-
+        PizzaOrder actualRecord;
+        int j = 0;
         for (int i = 0; i < expectedRecords.size(); i++) {
-			System.out.print("Actual values: " + om.writeValueAsString(actualRecords.get(i)));
+            while(j < actualRecords.size() && !actualRecords.get(j).isTestData()){
+                j++; //skip non-test data
+            }
+            actualRecord = actualRecords.get(j);
+            System.out.print("Actual values: " + om.writeValueAsString(actualRecord));
             //Assert.isTrue(new ReflectionEquals(expectedRecords.get(i), "id", "dateTime").matches(actualRecords.get(i)), "expectedRecords must match actualRecordes");
-			Assert.isTrue(expectedRecords.get(i).compare(actualRecords.get(i)), "expectedRecords must match actualRecordes");
+            Assert.isTrue(expectedRecords.get(i).compare(actualRecord), "expectedRecords must match actualRecordes");
+            j++;            
         }
     }
 	
     @Test
     public void testPizzaOrderEndpointWithGETById() throws Exception {       
-        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
+        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
         System.out.print("Expected 1 values: " + om.writeValueAsString(expectedRecord));
-        PizzaOrder actualRecord = om.readValue(mockMvc.perform(get("/pizzaria/" + expectedRecord.getId())
+        PizzaOrder actualRecord = om.readValue(mockMvc.perform(get("/pizzaria/" + expectedRecord.getId()).with(user(tUser).password(tPassword))
                 .contentType("application/json"))
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
@@ -209,7 +233,7 @@ class OrderingApplicationTests {
         //Assert.isTrue(new ReflectionEquals(expectedRecord, "id", "dateTime").matches(actualRecord), "expectedRecords must match actualRecordes");
 		Assert.isTrue(expectedRecord.compare(actualRecord), "expectedRecords must match actualRecordes");
 
-        mockMvc.perform(get("/pizzaria/" + Integer.MAX_VALUE))
+        mockMvc.perform(get("/pizzaria/" + Integer.MAX_VALUE).with(user(tUser).password(tPassword)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -217,18 +241,18 @@ class OrderingApplicationTests {
     @Test
     public void testPizzaOrderEndpointUpdateStatusById() throws Exception {
         String newStatus = "DELIVERED";       
-        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/")
+        PizzaOrder expectedRecord = om.readValue(mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o1"))))
                 .andDo(print())
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
         System.out.print("to be updated value: " + om.writeValueAsString(expectedRecord));
         
-        mockMvc.perform(put("/pizzaria/status/" + expectedRecord.getId() + "/" + newStatus))
+        mockMvc.perform(put("/pizzaria/status/" + expectedRecord.getId() + "/" + newStatus).with(user(tUser).password(tPassword)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        PizzaOrder actualRecord = om.readValue(mockMvc.perform(get("/pizzaria/" + expectedRecord.getId())
+        PizzaOrder actualRecord = om.readValue(mockMvc.perform(get("/pizzaria/" + expectedRecord.getId()).with(user(tUser).password(tPassword))
                 .contentType("application/json"))
                 .andDo(print())
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), PizzaOrder.class);
@@ -236,7 +260,7 @@ class OrderingApplicationTests {
         //Assert.isTrue(new ReflectionEquals(expectedRecord, "id", "dateTime").matches(actualRecord), "expectedRecords must match actualRecordes");
 		Assert.isTrue(actualRecord.getStatus().equals(newStatus), "expected status must match actual status");
 
-        mockMvc.perform(put("/pizzaria/status/" + Integer.MAX_VALUE + "/" + newStatus))
+        mockMvc.perform(put("/pizzaria/status/" + Integer.MAX_VALUE + "/" + newStatus).with(user(tUser).password(tPassword)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }   
@@ -245,26 +269,26 @@ class OrderingApplicationTests {
     public void testPizzaOrderEndpointDeleteById() throws Exception {
         int i = 0;
         for (Map.Entry<String, PizzaOrder> kv : dataMap.entrySet()) {
-            mockMvc.perform(post("/pizzaria/")
+            mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
             .contentType("application/json")
             .content(om.writeValueAsString(kv.getValue())));
             i++;
             if(i>=2) break;
         }
-        Integer id = om.readValue(mockMvc.perform(post("/pizzaria/")
+        Integer id = om.readValue(mockMvc.perform(post("/pizzaria/").with(user(tUser).password(tPassword))
                 .contentType("application/json")
                 .content(om.writeValueAsString(dataMap.get("o3"))))
                 .andDo(print())
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString(), PizzaOrder.class).getId();
         System.out.print("id to be deleted: " + id);        
-        String s = mockMvc.perform(delete("/pizzaria/" + id)
+        String s = mockMvc.perform(delete("/pizzaria/" + id).with(user(tUser).password(tPassword))
                 .contentType("application/json"))
                 .andDo(print())
                 .andExpect(status().isNoContent()).andReturn().getResponse().getContentAsString();
 
 		System.out.print("delete returned values: " + s);
 
-        mockMvc.perform(delete("/pizzaria/" + Integer.MAX_VALUE))
+        mockMvc.perform(delete("/pizzaria/" + Integer.MAX_VALUE).with(user(tUser).password(tPassword)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
