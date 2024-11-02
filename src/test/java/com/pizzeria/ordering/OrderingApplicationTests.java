@@ -85,10 +85,10 @@ class OrderingApplicationTests {
     @BeforeEach
     public void setup() throws ParseException{
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-        List<PizzaOrder> list_PO = pizzaOrderRepository.findAllByIsTestData(true);
-        for(PizzaOrder po: list_PO){
-            pizzaOrderRepository.deleteById(po.getId()); 
-        }
+        // List<PizzaOrder> list_PO = pizzaOrderRepository.findAllByIsTestData(true);
+        // for(PizzaOrder po: list_PO){
+        //     pizzaOrderRepository.deleteById(po.getId()); 
+        // }
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
 		LocalDateTimeDeserializer dateTimeDeserializer = new LocalDateTimeDeserializer(formatter);
