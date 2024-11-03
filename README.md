@@ -5,9 +5,9 @@
 - Maven version: 3.*
 - Spring Boot version: 3.3.4
 
-## Read-Only Files:
-- src/test/*
-
+## Security:
+- use User ID: pUser, password: IWantP1zza! to access the API from Postman.
+  
 ## Data:
 Example of a pizzaria data JSON object:
 ```
@@ -43,7 +43,7 @@ Valid pizza order statuses: "PREPARING", "BAKED", "DELIVERING", "DELIVERED"
 Valid pizza sizes: "SMALL", "MEDIUM", "LARGE"
 
 ## Requirements:
-The current url for the service on AWS ECS is: http://13.58.25.163:8080/pizzaria/
+The current url for the service on AWS ECS is: http://[13.58.25.163](http://18.117.232.211/):8080/pizzaria/
 This IP address could change. Please refer to this documenet for the latest IP address.
 
 The `REST` service must expose the `/pizzaria/` endpoint, which allows for managing the collection of pizzaria pizza order records in the following way:
