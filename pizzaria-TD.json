@@ -15,7 +15,24 @@
                 }
             ],
             "essential": true,
-            "environment": [],
+            "environment": [
+                {
+                    "name": "spring.datasource.username",
+                    "value": "root"
+                },
+                {
+                    "name": "spring.datasource.url",
+                    "value": "jdbc:mysql://pizzaria.c12gyukmspag.us-east-2.rds.amazonaws.com:3306/pizzaria"
+                },
+                {
+                    "name": "spring.profiles.active",
+                    "value": "prod"
+                },
+                {
+                    "name": "spring.datasource.password",
+                    "value": "Pa$$w0rd"
+                }
+            ],
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
@@ -82,8 +99,8 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "1024",
-    "memory": "3072",
+    "cpu": "512",
+    "memory": "2048",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
