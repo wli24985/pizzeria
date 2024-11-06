@@ -1,0 +1,15 @@
+# logging:
+#   level:
+#     com.pizzeria.ordering.controller: DEBUG
+#     #root: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        # include: "health, beans, metrics"
+        include: "*"
+        exclude: "caches"
+      base-path: "/actuator-home"
+  endpoint:
+    health:
+      show-details: always
