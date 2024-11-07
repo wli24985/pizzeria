@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pizzeria.ordering.DTO.OrderingDTO;
 import com.pizzeria.ordering.service.PizzaOrderServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "Pizza Ordering Controller")
 @RequestMapping(path = "/pizzaria")
 public class PizzaOrderingApiController {
     @Autowired
     PizzaOrderServiceImpl pizzaOrderService;
 
+    private static final Logger logIt = LoggerFactory.getLogger(PizzaOrderingApiController.class);
     /**
      * - creates a new pizza order
      * <p>
@@ -37,8 +43,10 @@ public class PizzaOrderingApiController {
      * @return ResponseEntity with created pizza order
      * @throws ParseException
      */
+    @Operation(summary = "Create a Pizza Order")
     @PostMapping("/")
     public ResponseEntity<?> createPizzaOrderEntity(@RequestBody OrderingDTO orderingDTO) throws ParseException {
+        logIt.info("Logging: begin Posting 1 new pizza orger.");
         OrderingDTO w =  pizzaOrderService.createNewOrder(orderingDTO);
         if(w == null){
             return new ResponseEntity<Error>(HttpStatus.BAD_REQUEST); 
@@ -52,8 +60,10 @@ public class PizzaOrderingApiController {
      * <p>
      * @return 200 with weather data
      */
+    @Operation(summary = "Get the full list of Pizza Orders")
     @GetMapping("/")
     public ResponseEntity<?> getAll() {
+        logIt.info("Logging: begin listing all pizza orgers.");
         List<OrderingDTO> ret_ordering_dto_list = pizzaOrderService.getAllOrderedById();
         return ResponseEntity.ok().body(ret_ordering_dto_list);
     }
@@ -67,9 +77,11 @@ public class PizzaOrderingApiController {
      * @param id
      * @return 404 if not found or 200 with weather data if found
      */
+    @Operation(summary = "Get a Pizza Order by ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderingById(@PathVariable Integer id) {
-
+        logIt.info("Logging: begin getting 1 pizza by ID.");
+        logIt.debug("the id passed in is: " + id);
         OrderingDTO ret_ordering_dto = pizzaOrderService.getOrderUsingId(id);
         if(ret_ordering_dto == null){
             // ResponseEntity responseEntity = new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -89,10 +101,10 @@ public class PizzaOrderingApiController {
      * @param id
      * @return 404 if not found or 204 with order data if found
      */
-    
+    @Operation(summary = "Delete a Pizza Order by ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrderingById(@PathVariable Integer id) {
-
+        logIt.info("Logging: begin delete 1 pizza order.");
         String s = pizzaOrderService.deleteOrderWithId(id);
         if(s == null){
 
@@ -111,8 +123,10 @@ public class PizzaOrderingApiController {
      * @param id
      * @return 404 if not found or 200 with order data if found
     */
+    @Operation(summary = "Update a Pizza Order by ID to new status")
     @PutMapping("/status/{id}/{status}")
     public ResponseEntity<?> updateOrderStatusById(@PathVariable Integer id, @PathVariable String status) {
+        logIt.info("Logging: begin update 1 pizza order.");
         List<String> validStatusList = new ArrayList<>(){{
             add("PREPARING");
             add("BAKED");
