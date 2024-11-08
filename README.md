@@ -43,7 +43,7 @@ Valid pizza order statuses: "PREPARING", "BAKED", "DELIVERING", "DELIVERED"
 Valid pizza sizes: "SMALL", "MEDIUM", "LARGE"
 
 ## Requirements:
-The current url for the service on AWS ECS is: http://18.188.152.240:8080/pizzaria/
+The current url for the service on AWS ECS is: http://3.140.188.194:8080/pizzaria/
 This IP address could change. Please refer to this documenet for the latest IP address.
 
 The `REST` service must expose the `/pizzaria/` endpoint, which allows for managing the collection of pizzaria pizza order records in the following way:
@@ -79,7 +79,10 @@ PUT request to `/pizzaria/status/<id>/<new status>`:
 - updates a pizza order record with the given id to new status
 - if the matching record exists, the response code is 200 and the response body is the updated pizza order 
 - if there is no record in the collection with the given id, the response code is 404
-  
+
+## Actuator: Status check
+- http://3.140.188.194:8080/actuator-home
+
 ## Commands
 - run: 
 ```bash
